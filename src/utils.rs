@@ -1,10 +1,12 @@
 use std::path::PathBuf;
+use std::path::Path;
 use std::io::BufReader;
 use std::io::BufWriter;
 use std::fs::File;
 use std::collections::HashMap;
 use std::process::Command;
 use std::process::Stdio;
+use std::process::exit;
 use serde::de::DeserializeOwned;
 use serde_cbor;
 use serde_json::Value;
@@ -65,8 +67,26 @@ pub fn compile_circom(circom_path: PathBuf, verbose: bool) {
     if !verbose {
         a.stdout(Stdio::null());
     }
-    a.arg(circom_path.clone()).arg("--wasm").arg("--r1cs").arg("-o").arg(parent);
-    a.status().expect("process failed");
+    if Path::is_file(&circom_path) {
+        a.arg(circom_path.clone()).arg("--wasm").arg("--r1cs").arg("-o").arg(parent);
+        let status = a.status();
+		match status {
+			Ok(result) => {
+				if result.code().unwrap() == 1 {
+					eprintln!("error in the circom file {:?}", circom_path);
+					exit(1);
+				}
+			},
+			Err(error) => {
+				eprintln!("error: {}", error);
+				exit(1);
+			}
+		}
+    }
+    else {
+        eprintln!("there is no such circom file {:?}", circom_path);
+        exit(1);
+    }
 }
 
 pub fn hexstr_to_u64(hex_string: &str) -> [u64; 4] {

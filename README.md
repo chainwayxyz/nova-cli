@@ -30,3 +30,5 @@ Verify
 ./target/release/nova-cli verify a.proof a.vk a_start_input.json 7
 ```
 
+Use  `--verbose` to print progress messages.
+
