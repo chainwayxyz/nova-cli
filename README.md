@@ -6,29 +6,33 @@ Build
 cargo build --release
 ```
 
-Get circomlib
+Install the binary
 
 ```sh
-npm install circomlib
+cargo install --path .
 ```
 
-Setup
+## Setup
+
+This command takes a circom file and creates public parameters, prover key, verifier key.
 
 ```sh
-./target/release/nova-cli setup a.circom
+nova-cli --verbose setup a.circom
 ```
 
-Prove
+## Prove
+
+This command takes public parameters, prover key, input, start public input and creates a proof.
 
 ```sh
-./target/release/nova-cli prove a.pp a.pk a_input.json a_start_input.json
+nova-cli --verbose prove a.pp a.pk a_input.json a_start_input.json
 ```
 
-Verify
+## Verify
+
+This command takes proof, verifier key, start public input, iteration count and verifies the proof.
 
 ```sh
-./target/release/nova-cli verify a.proof a.vk a_start_input.json 7
+nova-cli --verbose verify a.proof a.vk a_start_input.json 7
 ```
-
-Use  `--verbose` to print progress messages.
 
