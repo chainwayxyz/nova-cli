@@ -1,12 +1,14 @@
-# Circom CLI in Rust
+# Nova CLI in Rust
 
-Build
+command line interface for [Nova Scotia](https://github.com/nalinbhardwaj/Nova-Scotia).
+
+- Build
 
 ```sh
 cargo build --release
 ```
 
-Install the binary
+- Install the binary
 
 ```sh
 cargo install --path .
