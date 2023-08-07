@@ -54,10 +54,15 @@ pub fn read_circuit_inputs(input_path: PathBuf) -> Vec<HashMap<String, Value>> {
     return private_inputs;
 }
 
-pub fn read_start_input(start_path: PathBuf) -> String {
+pub fn read_start_input(start_path: PathBuf) -> Vec<String> {
     let start_input: Value = json_to_obj(start_path);
-    let a = start_input.as_object().unwrap().get("step_in").unwrap().as_str().unwrap().to_string();
-    return a;
+    let a = start_input.as_object().unwrap().get("step_in").unwrap().as_array().unwrap();
+    let mut input_vector: Vec<String> = Vec::new();
+    for value in a {
+        let x = value.as_str().unwrap();
+        input_vector.push(x.to_string());
+    }
+    return input_vector;
 }
 
 pub fn compile_circom(circom_path: PathBuf, verbose: bool) {
@@ -89,17 +94,18 @@ pub fn compile_circom(circom_path: PathBuf, verbose: bool) {
     }
 }
 
-pub fn hexstr_to_u64(hex_string: &str) -> [u64; 4] {
-    if hex_string.len() != 64 {
-        panic!("Invalid hex string length. Expected 64 characters.");
-    }
+pub fn hexstr_to_4u64(hex_string: String) -> [u64; 4] {
+    let a = &hex_string[0..2];
+    assert_eq!(a.to_lowercase(), "0x");
+    let formatted = format!("{:0>64}", &hex_string[2..]);
     let mut parts = [0u64; 4];
     for i in 0..4 {
         let start = i * 16;
         let end = start + 16;
-        let slice = &hex_string[start..end];
+        let slice = &formatted[start..end];
         let num = u64::from_str_radix(slice, 16).expect("Invalid hex string.");
         parts[3 - i] = num;
     }
     return parts;
 }
+

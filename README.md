@@ -17,7 +17,7 @@ cargo install --path .
 This command takes a circom file and creates public parameters, prover key, verifier key.
 
 ```sh
-nova-cli --verbose setup a.circom
+nova-cli --verbose setup examples/toy.circom
 ```
 
 ## Prove
@@ -25,7 +25,7 @@ nova-cli --verbose setup a.circom
 This command takes public parameters, prover key, input, start public input and creates a proof.
 
 ```sh
-nova-cli --verbose prove a.pp a.pk a_input.json a_start_input.json
+nova-cli --verbose prove examples/toy.pp examples/toy.pk examples/input.json examples/start_input.json
 ```
 
 ## Verify
@@ -33,6 +33,6 @@ nova-cli --verbose prove a.pp a.pk a_input.json a_start_input.json
 This command takes proof, verifier key, start public input, iteration count and verifies the proof.
 
 ```sh
-nova-cli --verbose verify a.proof a.vk a_start_input.json 7
+nova-cli --verbose verify examples/toy.proof examples/toy.vk examples/start_input.json 5
 ```
 

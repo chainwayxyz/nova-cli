@@ -20,7 +20,7 @@ use crate::utils::json_to_obj;
 use crate::utils::obj_to_json;
 use crate::utils::cbor_to_obj;
 use crate::utils::obj_to_cbor;
-use crate::utils::hexstr_to_u64;
+use crate::utils::hexstr_to_4u64;
 use crate::utils::read_circuit_inputs;
 use crate::utils::read_start_input;
 use crate::utils::compile_circom;
@@ -106,8 +106,11 @@ pub fn prove(pp_path: PathBuf, pk_path: PathBuf, input_path: PathBuf, start_path
     if verbose {println!("private inputs read from file {:?}", input_path);}
 
     // read start public input
-    let start_public_input_string = read_start_input(start_path.clone());
-    let start_public_input = vec![F::<G1>::from_raw(hexstr_to_u64(start_public_input_string.as_str()))];
+    let start_public_input_vector = read_start_input(start_path.clone());
+    let mut start_public_input = Vec::new();
+    for a in start_public_input_vector {
+        start_public_input.push(F::<G1>::from_raw(hexstr_to_4u64(a)));
+    }
     if verbose {println!("start public input read from file {:?}", start_path);}
 
     // recursive snark
@@ -142,14 +145,17 @@ pub fn verify(proof_path: PathBuf, vk_path: PathBuf, start_path: PathBuf, iterat
     if verbose {println!("verifier key read from file {:?}", vk_path);}
 
     // read start public input
-    let start_public_input_string = read_start_input(start_path.clone());
-    let start_public_input = vec![F::<G1>::from_raw(hexstr_to_u64(start_public_input_string.as_str()))];
+    let start_public_input_vector = read_start_input(start_path.clone());
+    let mut start_public_input = Vec::new();
+    for a in start_public_input_vector {
+        start_public_input.push(F::<G1>::from_raw(hexstr_to_4u64(a)));
+    }
     if verbose {println!("start public input read from file {:?}", start_path);}
 
     // verify proof
     let z0_secondary = vec![F::<G2>::from(0)];
     let result = proof.verify(&vk, iteration_count, start_public_input.clone(), z0_secondary).unwrap();
-    if verbose {println!("proof verified, {:?}", result.0[0]);}
+    if verbose {println!("proof verified, {:?}", result.0);}
 
     // print elapsed time
     if verbose {println!("verify done in {:?}", start.elapsed());}
