@@ -4,6 +4,7 @@ use std::io::BufWriter;
 use std::fs::File;
 use std::collections::HashMap;
 use std::process::Command;
+use std::process::Stdio;
 use serde::de::DeserializeOwned;
 use serde_cbor;
 use serde_json::Value;
@@ -57,10 +58,13 @@ pub fn read_start_input(start_path: PathBuf) -> String {
     return a;
 }
 
-pub fn compile_circom(circom_path: PathBuf) {
-    println!("compile circom {:?}", circom_path);
+pub fn compile_circom(circom_path: PathBuf, verbose: bool) {
+    if verbose {println!("compiling circom file {:?}", circom_path);}
     let mut a = Command::new("circom");
     let parent = circom_path.parent().expect("no parent");
+    if !verbose {
+        a.stdout(Stdio::null());
+    }
     a.arg(circom_path.clone()).arg("--wasm").arg("--r1cs").arg("-o").arg(parent);
     a.status().expect("process failed");
 }
